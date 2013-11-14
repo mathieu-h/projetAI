@@ -2,6 +2,7 @@ package projet;
 
 import JaCoP.scala.jacop
 import JaCoP.scala._
+import JaCoP.core.IntVar
 
 object Horaire extends jacop {
 
@@ -49,13 +50,26 @@ object Horaire extends jacop {
     val horaireS1 = for(i <- List.range(0,39)) yield (IntVar("profs",0,3),IntVar("matieres",0,3),IntVar("locaux",0,1));
     val horaireS2 = for(i <- List.range(0,39)) yield (IntVar("profs",0,3),IntVar("matieres",0,3),IntVar("locaux",0,1));
     
+    // gestion du nombre d'heure d'IA (4 par semaine)
+    val heuresIAS1 = for (i <- List.range(0, 39)) yield (BoolVar("IAhS1" + i));
+    val heuresIAS2 = for (i <- List.range(0, 39)) yield (BoolVar("IAhS2" + i));
+    
     for(i <- List.range(0, 39)){
       // deux profs ne peuvent pas etre au meme indice des deux horaires (un prof ne peut pas donner deux cours en meme temps)
       horaireS1(i)._1 #\= horaireS2(i)._1; 
       // deux cours ne peuvent pas être au même local pour les deux séries en même temps
       horaireS1(i)._3 #\= horaireS2(i)._3;      
-      // suite de l algo blabla
+      
+      //place flag a true si le cours est IA (pour compter aprs)
+      heuresIAS1(i) <=> (horaireS1(i)._2 #= ia);
+      heuresIAS2(i) <=> (horaireS2(i)._2 #= ia);
+      
+      //(OR(horaireS1(i)._1 #= grolaux), horaireS1(i)._1 #= seront) <=> (horaireS1(i)._2 #= ia)
+      
     }
+    
+    sum(heuresIAS1) #= 4;
+    sum(heuresIAS2) #= 4;
     
   }
 }
