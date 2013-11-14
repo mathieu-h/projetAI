@@ -54,6 +54,10 @@ object Horaire extends jacop {
     val heuresIAS1 = for (i <- List.range(0, 39)) yield (BoolVar("IAhS1" + i));
     val heuresIAS2 = for (i <- List.range(0, 39)) yield (BoolVar("IAhS2" + i));
     
+    // gestion du nombre d'heures d'IA donnée par M.Grolaux par semaine (2)
+    val heuresIAG1 = for (i <- List.range(0, 39)) yield (BoolVar("IAhSG1" + i));
+    val heuresIAG2 = for (i <- List.range(0, 39)) yield (BoolVar("IAhSG2" + i));
+    
     for(i <- List.range(0, 39)){
       // deux profs ne peuvent pas etre au meme indice des deux horaires (un prof ne peut pas donner deux cours en meme temps)
       horaireS1(i)._1 #\= horaireS2(i)._1; 
@@ -73,6 +77,10 @@ object Horaire extends jacop {
       //frank ne peut pas donner cours d'IA
       NOT(AND(horaireS1(i)._1 #= frank, horaireS1(i)._2 #= ia));
       NOT(AND(horaireS2(i)._1 #= frank, horaireS2(i)._2 #= ia));
+      
+      //place flag a true si le cours est IA (pour compter aprs)
+      heuresIAG1(i) <=> AND((horaireS1(i)._2 #= ia),(horaireS1(i)._1 #= grolaux));
+      heuresIAG2(i) <=> AND((horaireS2(i)._2 #= ia),(horaireS1(i)._1 #= grolaux));
       
       
     }
