@@ -82,7 +82,7 @@ object Horaire extends jacop {
       heuresIAG1(i) <=> AND((horaireS1(i)._2 #= ia),(horaireS1(i)._1 #= grolaux));
       heuresIAG2(i) <=> AND((horaireS2(i)._2 #= ia),(horaireS1(i)._1 #= grolaux));
       
-      
+      //dokzdokzdozkdzodkzodk
     }
     
     sum(heuresIAS1) #= 4;
