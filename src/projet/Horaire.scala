@@ -32,20 +32,20 @@ object Horaire extends jacop {
     val l019 = 1;
     
     // HORAIRE
-    // creer deux list correspondant aux deux horaires (un par série)
+    // creer deux list correspondant aux deux horaires (un par sÈrie)
     // elles auront 40 "cases", chaque indice correspond a un cours (exemple lundi a 8H30 => indice 0 du tableau)
-    // chaque case d'un meme tableau comporte un élément "cours" qui est lui meme composé d'un professeur , d'une matiere et d'un local
+    // chaque case d'un meme tableau comporte un ÈlÈment "cours" qui est lui meme composÈ d'un professeur , d'une matiere et d'un local
   
-    // dans un tableau on peut avoir x fois la meme matiere (en fonction du nombre de fois qu'il est donné dans la semaine)
+    // dans un tableau on peut avoir x fois la meme matiere (en fonction du nombre de fois qu'il est donnÈ dans la semaine)
     // mais par contre on ne peut pas avoir 
-    // un cours qui a le même professeur ou le meme local au meme indice dans les 2 tableaux en meme temps => un prof ne peut pas etre
+    // un cours qui a le mÍme professeur ou le meme local au meme indice dans les 2 tableaux en meme temps => un prof ne peut pas etre
     // a deux endroits a la fois
     
     // COURS
-    // Pour définir un cours, on agrege trois choses : une matiere, un professeur et un local
+    // Pour dÈfinir un cours, on agrege trois choses : une matiere, un professeur et un local
     
-    // Soit un cours qui est un liste comportant les trois, chacun définit via un IntVar sur lequel on mettra des 
-    // contraintes telles que ( ce prof doit etre représenté trois fois avec ce cours la, 2 fois pour ce cours la) 
+    // Soit un cours qui est un liste comportant les trois, chacun dÈfinit via un IntVar sur lequel on mettra des 
+    // contraintes telles que ( ce prof doit etre reprÈsentÈ trois fois avec ce cours la, 2 fois pour ce cours la) 
     
     val horaireS1 = for(i <- List.range(0,39)) yield (IntVar("profs",0,3),IntVar("matieres",0,3),IntVar("locaux",0,1));
     val horaireS2 = for(i <- List.range(0,39)) yield (IntVar("profs",0,3),IntVar("matieres",0,3),IntVar("locaux",0,1));
@@ -57,14 +57,23 @@ object Horaire extends jacop {
     for(i <- List.range(0, 39)){
       // deux profs ne peuvent pas etre au meme indice des deux horaires (un prof ne peut pas donner deux cours en meme temps)
       horaireS1(i)._1 #\= horaireS2(i)._1; 
-      // deux cours ne peuvent pas être au même local pour les deux séries en même temps
+      // deux cours ne peuvent pas Ítre au mÍme local pour les deux sÈries en mÍme temps
       horaireS1(i)._3 #\= horaireS2(i)._3;      
       
-      //place flag a true si le cours est IA (pour compter aprs)
+      //place flag a true si le cours est IA (pour compter après)
       heuresIAS1(i) <=> (horaireS1(i)._2 #= ia);
       heuresIAS2(i) <=> (horaireS2(i)._2 #= ia);
       
-      //(OR(horaireS1(i)._1 #= grolaux), horaireS1(i)._1 #= seront) <=> (horaireS1(i)._2 #= ia)
+      //si heure 1 ou 2 => prof peut pas etre grolaux (grolaux ne veut pas donner cours avant 10h30)
+      if ((i+1)%8 == 1 || (i+1)%8 == 2){
+    	  horaireS1(i)._1 #\= grolaux; 
+    	  horaireS2(i)._1 #\= grolaux; 
+      }
+      
+      //frank ne peut pas donner cours d'IA
+      NOT(AND(horaireS1(i)._1 #= frank, horaireS1(i)._2 #= ia));
+      NOT(AND(horaireS2(i)._1 #= frank, horaireS2(i)._2 #= ia));
+      
       
     }
     
