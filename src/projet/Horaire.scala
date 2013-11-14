@@ -53,7 +53,8 @@ object Horaire extends jacop {
       // deux profs ne peuvent pas etre au meme indice des deux horaires (un prof ne peut pas donner deux cours en meme temps)
       horaireS1(i)._1 #\= horaireS2(i)._1; 
       // deux cours ne peuvent pas être au même local pour les deux séries en même temps
-      horaireS1(i)._3 #\= horaireS2(i)._3;       
+      horaireS1(i)._3 #\= horaireS2(i)._3;      
+      // suite de l algo
     }
     
   }
